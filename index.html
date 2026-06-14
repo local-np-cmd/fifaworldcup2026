@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Facebook Open Graph Meta Tags -->
+    <meta property="og:url" content="https://facebook-share-five.vercel.app" />
+    <meta property="og:title" content="FIFA World Cup 2026 - Live Scores & Schedule" />
+    <meta property="og:description" content="Follow every match, live scores, and standings from the 2026 FIFA World Cup!" />
+    <meta property="og:image" content="https://placehold.co/1200x630/009b3a/FFD700?text=FIFA+World+Cup+2026+Live" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:type" content="website" />
+    
+    <title>World Cup 2026 - Live Scores</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0d3b1a 0%, #1a472a 50%, #0d3b1a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        .header .trophy { font-size: 60px; margin-bottom: 10px; }
+        .header h1 { font-size: 36px; margin-bottom: 8px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .header p { font-size: 16px; opacity: 0.9; }
+
+        /* Live Badge */
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e74c3c;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Group Section */
+        .group-section {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .group-header {
+            background: linear-gradient(90deg, #009b3a, #1a5f2a);
+            color: white;
+            padding: 16px 24px;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Match Card */
+        .match-card {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f2f5;
+            transition: background 0.2s;
+        }
+
+        .match-card:hover {
+            background: #f8f9fa;
+        }
+
+        .match-card:last-child {
+            border-bottom: none;
+        }
+
+        .match-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-live { color: #e74c3c; }
+        .status-finished { color: #27ae60; }
+        .status-upcoming { color: #7f8c8d; }
+
+        .match-teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .team-side {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .team-side:last-child {
+            justify-content: flex-end;
+        }
+
+        .team-flag {
+            font-size: 32px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .team-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c1e21;
+        }
+
+        .score-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px;
+        }
+
+        .score {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1c1e21;
+            min-width: 36px;
+            text-align: center;
+        }
+
+        .score-divider {
+            font-size: 20px;
+            color: #bdc3c7;
+            font-weight: 300;
+        }
+
+        .match-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #65676b;
+        }
+
+        .match-time {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Facebook Share Button */
+        .fb-share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .fb-share-btn:hover {
+            background: #166fe5;
+            transform: translateY(-1px);
+        }
+
+        .fb-share-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+
+        /* Standings Table */
+        .standings {
+            padding: 20px 24px;
+            background: #f8f9fa;
+        }
+
+        .standings h3 {
+            font-size: 14px;
+            color: #65676b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 30px 1fr 40px 40px 40px 40px 50px;
+            gap: 8px;
+            padding: 8px 0;
+            font-size: 14px;
+            align-items: center;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        .table-row:last-child { border-bottom: none; }
+        .table-row.header-row { font-weight: 700; color: #65676b; font-size: 12px; }
+        .table-row .team-cell { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+        .table-row .flag-small { font-size: 20px; }
+        .pts { font-weight: 800; color: #1877f2; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1c1e21;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 24px; }
+            .team-name { font-size: 14px; }
+            .score { font-size: 22px; }
+            .match-teams { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="trophy">🏆</div>
+            <div class="live-badge">
+                <div class="live-dot"></div>
+                LIVE NOW
+            </div>
+            <h1>FIFA World Cup 2026</h1>
+            <p>USA · Canada · Mexico | June 11 - July 19, 2026</p>
+        </div>
+
+        <!-- GROUP A -->
+        <div class="group-section">
+            <div class="group-header">📊 GROUP A</div>
+            
+            <!-- Match 1: Finished -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-finished">● FULL TIME</span>
+                    <span>June 11, 2026 · Estadio Azteca, Mexico City</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇲🇽</span>
+                        <span class="team-name">Mexico</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score">2</span>
+                        <span class="score-divider">-</span>
+                        <span class="score">0</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">South Africa</span>
+                        <span class="team-flag">🇿🇦</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">⚽ Goals: 23', 67'</span>
+                    <button class="fb-share-btn" onclick="shareMatch('Mexico', 'South Africa', '2-0', 'Group A - June 11')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Match 2: Finished -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-finished">● FULL TIME</span>
+                    <span>June 11, 2026 · Estadio Akron, Guadalajara</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇰🇷</span>
+                        <span class="team-name">South Korea</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score">2</span>
+                        <span class="score-divider">-</span>
+                        <span class="score">1</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">Czechia</span>
+                        <span class="team-flag">🇨🇿</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">⚽ Goals: 34', 78' - 56'</span>
+                    <button class="fb-share-btn" onclick="shareMatch('South Korea', 'Czechia', '2-1', 'Group A - June 11')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Standings -->
+            <div class="standings">
+                <h3>Group Standings</h3>
+                <div class="table-row header-row">
+                    <span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span class="pts">PTS</span>
+                </div>
+                <div class="table-row">
+                    <span>1</span>
+                    <div class="team-cell"><span class="flag-small">🇲🇽</span> Mexico</div>
+                    <span>1</span><span>1</span><span>0</span><span>0</span><span class="pts">3</span>
+                </div>
+                <div class="table-row">
+                    <span>2</span>
+                    <div class="team-cell"><span class="flag-small">🇰🇷</span> South Korea</div>
+                    <span>1</span><span>1</span><span>0</span><span>0</span><span class="pts">3</span>
+                </div>
+                <div class="table-row">
+                    <span>3</span>
+                    <div class="team-cell"><span class="flag-small">🇨🇿</span> Czechia</div>
+                    <span>1</span><span>0</span><span>0</span><span>1</span><span class="pts">0</span>
+                </div>
+                <div class="table-row">
+                    <span>4</span>
+                    <div class="team-cell"><span class="flag-small">🇿🇦</span> South Africa</div>
+                    <span>1</span><span>0</span><span>0</span><span>1</span><span class="pts">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- GROUP B -->
+        <div class="group-section">
+            <div class="group-header">📊 GROUP B</div>
+            
+            <!-- Match 1: Finished -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-finished">● FULL TIME</span>
+                    <span>June 12, 2026 · BMO Field, Toronto</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇨🇦</span>
+                        <span class="team-name">Canada</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score">1</span>
+                        <span class="score-divider">-</span>
+                        <span class="score">1</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">Bosnia</span>
+                        <span class="team-flag">🇧🇦</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">⚽ Goals: 45' - 62'</span>
+                    <button class="fb-share-btn" onclick="shareMatch('Canada', 'Bosnia and Herzegovina', '1-1', 'Group B - June 12')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Match 2: Finished -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-finished">● FULL TIME</span>
+                    <span>June 13, 2026 · Levi's Stadium, Santa Clara</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇨🇭</span>
+                        <span class="team-name">Switzerland</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score">1</span>
+                        <span class="score-divider">-</span>
+                        <span class="score">1</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">Qatar</span>
+                        <span class="team-flag">🇶🇦</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">⚽ Goals: 23' - 71'</span>
+                    <button class="fb-share-btn" onclick="shareMatch('Switzerland', 'Qatar', '1-1', 'Group B - June 13')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Standings -->
+            <div class="standings">
+                <h3>Group Standings</h3>
+                <div class="table-row header-row">
+                    <span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span class="pts">PTS</span>
+                </div>
+                <div class="table-row">
+                    <span>1</span>
+                    <div class="team-cell"><span class="flag-small">🇨🇦</span> Canada</div>
+                    <span>1</span><span>0</span><span>1</span><span>0</span><span class="pts">1</span>
+                </div>
+                <div class="table-row">
+                    <span>2</span>
+                    <div class="team-cell"><span class="flag-small">🇨🇭</span> Switzerland</div>
+                    <span>1</span><span>0</span><span>1</span><span>0</span><span class="pts">1</span>
+                </div>
+                <div class="table-row">
+                    <span>3</span>
+                    <div class="team-cell"><span class="flag-small">🇧🇦</span> Bosnia</div>
+                    <span>1</span><span>0</span><span>1</span><span>0</span><span class="pts">1</span>
+                </div>
+                <div class="table-row">
+                    <span>4</span>
+                    <div class="team-cell"><span class="flag-small">🇶🇦</span> Qatar</div>
+                    <span>1</span><span>0</span><span>1</span><span>0</span><span class="pts">1</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- GROUP D (USA) -->
+        <div class="group-section">
+            <div class="group-header">📊 GROUP D - USA GROUP</div>
+            
+            <!-- Match 1: Finished -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-finished">● FULL TIME</span>
+                    <span>June 12, 2026 · SoFi Stadium, Los Angeles</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇺🇸</span>
+                        <span class="team-name">USA</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score">4</span>
+                        <span class="score-divider">-</span>
+                        <span class="score">1</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">Paraguay</span>
+                        <span class="team-flag">🇵🇾</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">⚽ Goals: Balogun 12', Pulisic 34', 56', Weah 78' - 89'</span>
+                    <button class="fb-share-btn" onclick="shareMatch('USA', 'Paraguay', '4-1', 'Group D - June 12')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Match 2: Finished -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-finished">● FULL TIME</span>
+                    <span>June 13, 2026 · BC Place, Vancouver</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇦🇺</span>
+                        <span class="team-name">Australia</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score">2</span>
+                        <span class="score-divider">-</span>
+                        <span class="score">0</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">Türkiye</span>
+                        <span class="team-flag">🇹🇷</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">⚽ Goals: 44', 67'</span>
+                    <button class="fb-share-btn" onclick="shareMatch('Australia', 'Türkiye', '2-0', 'Group D - June 13')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upcoming Match -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-upcoming">● UPCOMING</span>
+                    <span>June 19, 2026 · Lumen Field, Seattle</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇺🇸</span>
+                        <span class="team-name">USA</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score" style="color:#bdc3c7">-</span>
+                        <span class="score-divider">vs</span>
+                        <span class="score" style="color:#bdc3c7">-</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">Australia</span>
+                        <span class="team-flag">🇦🇺</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">🕐 3:00 PM ET / 12:00 PM PT</span>
+                    <button class="fb-share-btn" onclick="shareMatch('USA', 'Australia', 'TBD', 'Group D - June 19')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Standings -->
+            <div class="standings">
+                <h3>Group Standings</h3>
+                <div class="table-row header-row">
+                    <span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span class="pts">PTS</span>
+                </div>
+                <div class="table-row">
+                    <span>1</span>
+                    <div class="team-cell"><span class="flag-small">🇺🇸</span> USA</div>
+                    <span>1</span><span>1</span><span>0</span><span>0</span><span class="pts">3</span>
+                </div>
+                <div class="table-row">
+                    <span>2</span>
+                    <div class="team-cell"><span class="flag-small">🇦🇺</span> Australia</div>
+                    <span>1</span><span>1</span><span>0</span><span>0</span><span class="pts">3</span>
+                </div>
+                <div class="table-row">
+                    <span>3</span>
+                    <div class="team-cell"><span class="flag-small">🇹🇷</span> Türkiye</div>
+                    <span>1</span><span>0</span><span>0</span><span>1</span><span class="pts">0</span>
+                </div>
+                <div class="table-row">
+                    <span>4</span>
+                    <div class="team-cell"><span class="flag-small">🇵🇾</span> Paraguay</div>
+                    <span>1</span><span>0</span><span>0</span><span>1</span><span class="pts">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- GROUP C -->
+        <div class="group-section">
+            <div class="group-header">📊 GROUP C</div>
+            
+            <!-- Match 1: Finished -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-finished">● FULL TIME</span>
+                    <span>June 13, 2026 · MetLife Stadium, New Jersey</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇧🇷</span>
+                        <span class="team-name">Brazil</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score">1</span>
+                        <span class="score-divider">-</span>
+                        <span class="score">1</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">Morocco</span>
+                        <span class="team-flag">🇲🇦</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">⚽ Goals: Vinicius Jr 67' - 34'</span>
+                    <button class="fb-share-btn" onclick="shareMatch('Brazil', 'Morocco', '1-1', 'Group C - June 13')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Match 2: Finished -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-finished">● FULL TIME</span>
+                    <span>June 13, 2026 · Gillette Stadium, Foxborough</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇭🇹</span>
+                        <span class="team-name">Haiti</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score">0</span>
+                        <span class="score-divider">-</span>
+                        <span class="score">1</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">Scotland</span>
+                        <span class="team-flag">🏴󠁧󠁢󠁳󠁣󠁴󠁿</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">⚽ Goal: 78'</span>
+                    <button class="fb-share-btn" onclick="shareMatch('Haiti', 'Scotland', '0-1', 'Group C - June 13')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Standings -->
+            <div class="standings">
+                <h3>Group Standings</h3>
+                <div class="table-row header-row">
+                    <span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span class="pts">PTS</span>
+                </div>
+                <div class="table-row">
+                    <span>1</span>
+                    <div class="team-cell"><span class="flag-small">🏴󠁧󠁢󠁳󠁣󠁴󠁿</span> Scotland</div>
+                    <span>1</span><span>1</span><span>0</span><span>0</span><span class="pts">3</span>
+                </div>
+                <div class="table-row">
+                    <span>2</span>
+                    <div class="team-cell"><span class="flag-small">🇧🇷</span> Brazil</div>
+                    <span>1</span><span>0</span><span>1</span><span>0</span><span class="pts">1</span>
+                </div>
+                <div class="table-row">
+                    <span>3</span>
+                    <div class="team-cell"><span class="flag-small">🇲🇦</span> Morocco</div>
+                    <span>1</span><span>0</span><span>1</span><span>0</span><span class="pts">1</span>
+                </div>
+                <div class="table-row">
+                    <span>4</span>
+                    <div class="team-cell"><span class="flag-small">🇭🇹</span> Haiti</div>
+                    <span>1</span><span>0</span><span>0</span><span>1</span><span class="pts">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- GROUP E -->
+        <div class="group-section">
+            <div class="group-header">📊 GROUP E</div>
+            
+            <!-- Upcoming -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-upcoming">● TODAY</span>
+                    <span>June 14, 2026 · NRG Stadium, Houston</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇩🇪</span>
+                        <span class="team-name">Germany</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score" style="color:#bdc3c7">-</span>
+                        <span class="score-divider">vs</span>
+                        <span class="score" style="color:#bdc3c7">-</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">Curaçao</span>
+                        <span class="team-flag">🇨🇼</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">🕐 1:00 PM ET</span>
+                    <button class="fb-share-btn" onclick="shareMatch('Germany', 'Curaçao', 'TBD', 'Group E - June 14')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upcoming -->
+            <div class="match-card">
+                <div class="match-status">
+                    <span class="status-upcoming">● TODAY</span>
+                    <span>June 14, 2026 · Lincoln Financial Field, Philadelphia</span>
+                </div>
+                <div class="match-teams">
+                    <div class="team-side">
+                        <span class="team-flag">🇨🇮</span>
+                        <span class="team-name">Ivory Coast</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score" style="color:#bdc3c7">-</span>
+                        <span class="score-divider">vs</span>
+                        <span class="score" style="color:#bdc3c7">-</span>
+                    </div>
+                    <div class="team-side">
+                        <span class="team-name">Ecuador</span>
+                        <span class="team-flag">🇪🇨</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span class="match-time">🕐 7:00 PM ET</span>
+                    <button class="fb-share-btn" onclick="shareMatch('Ivory Coast', 'Ecuador', 'TBD', 'Group E - June 14')">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">✅ Opening Facebook Share...</div>
+
+    <script>
+        const SITE_URL = 'https://facebook-share-five.vercel.app';
+
+        // Share individual match
+        function shareMatch(team1, team2, score, groupInfo) {
+            const matchText = score === 'TBD' 
+                ? `🏆 ${team1} vs ${team2} - ${groupInfo}`
+                : `🏆 ${team1} ${score} ${team2} - ${groupInfo}`;
+            
+            const description = score === 'TBD'
+                ? `Don't miss ${team1} vs ${team2} at the FIFA World Cup 2026!`
+                : `What a match! ${team1} ${score} ${team2} at the FIFA World Cup 2026!`;
+            
+            // Build share URL with custom quote
+            const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SITE_URL)}&quote=${encodeURIComponent(matchText + '\n\n' + description)}`;
+            
+            window.open(shareUrl, 'fb-share', 'width=626,height=436');
+            
+            showToast(`Sharing: ${team1} vs ${team2}`);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+
+</body>
+</html>
